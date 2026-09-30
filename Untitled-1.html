@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html ng-app="registerApp">
+<head>
+    <title>User Registration</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        body{
+            font-family: Arial;
+        }
+        .error{
+            color:red;
+            font-size:14px;
+        }
+        input.ng-invalid.ng-touched{
+            border-color:red;
+        }
+        input.ng-valid.ng-touched{
+            border-color:green;
+        }
+    </style>
+</head>
+
+<body ng-controller="registerController">
+
+<h2>User Registration Form</h2>
+
+<form name="regForm" novalidate>
+
+    <!-- Name -->
+    <label>Name:</label><br>
+    <input type="text"
+           name="name"
+           ng-model="user.name"
+           required
+           ng-minlength="3">
+
+    <div class="error" ng-show="regForm.name.$touched && regForm.name.$invalid">
+        <span ng-show="regForm.name.$error.required">Name is required.</span>
+        <span ng-show="regForm.name.$error.minlength">Minimum 3 characters required.</span>
+    </div>
+
+    <br><br>
+
+    <!-- Email -->
+    <label>Email:</label><br>
+    <input type="email"
+           name="email"
+           ng-model="user.email"
+           required>
+
+    <div class="error" ng-show="regForm.email.$touched && regForm.email.$invalid">
+        <span ng-show="regForm.email.$error.required">Email is required.</span>
+        <span ng-show="regForm.email.$error.email">Enter a valid email.</span>
+    </div>
+
+    <br><br>
+
+    <!-- Password -->
+    <label>Password:</label><br>
+    <input type="password"
+           name="password"
+           ng-model="user.password"
+           required
+           ng-minlength="6">
+
+    <div class="error" ng-show="regForm.password.$touched && regForm.password.$invalid">
+        <span ng-show="regForm.password.$error.required">Password is required.</span>
+        <span ng-show="regForm.password.$error.minlength">Password must be at least 6 characters.</span>
+    </div>
+
+    <br><br>
+
+    <!-- Confirm Password -->
+    <label>Confirm Password:</label><br>
+    <input type="password"
+           name="confirmPassword"
+           ng-model="user.confirmPassword"
+           required
+           password-match="user.password">
+
+    <div class="error" ng-show="regForm.confirmPassword.$touched && regForm.confirmPassword.$invalid">
+        <span ng-show="regForm.confirmPassword.$error.required">Confirm Password is required.</span>
+        <span ng-show="regForm.confirmPassword.$error.passwordMatch">Passwords do not match.</span>
+    </div>
+
+    <br><br>
+
+    <button type="submit" ng-disabled="regForm.$invalid">Register</button>
+
+</form>
+
+<script>
+
+var app = angular.module("registerApp", []);
+
+app.controller("registerController", function($scope){
+    $scope.user = {};
+});
+
+app.directive("passwordMatch", function(){
+    return {
+        require: "ngModel",
+        scope: {
+            passwordMatch: "="
+        },
+        link: function(scope, element, attrs, ctrl){
+
+            ctrl.$validators.passwordMatch = function(modelValue){
+                return modelValue === scope.passwordMatch;
+            };
+
+            scope.$watch("passwordMatch", function(){
+                ctrl.$validate();
+            });
+
+        }
+    };
+});
+
+</script>
+
+</body>
+</html>
